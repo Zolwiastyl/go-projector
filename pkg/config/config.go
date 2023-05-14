@@ -66,6 +66,9 @@ func getConfigPath(options *Options) (string, error) {
 
 }
 func getOperation(options *Options) Operation {
+	// print options args
+	fmt.Printf("options args %v ", options.Args)
+
 	if len(options.Args) == 0 {
 		return Print
 	}
