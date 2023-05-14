@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -18,29 +19,29 @@ func main() {
 		log.Fatalf("Unable to get options %v", err)
 	}
 
-	fmt.Printf("config: %+v", config)
-	fmt.Printf("opts: %+v", opts)
-
 	projector := projector.NewProjector(config)
 
 	switch config.Operation {
 	case projector_config.Print:
-		fmt.Println("print")
 
-		if config.Args == nil || len(config.Args) == 0 {
-			projector.GetValueAll()
+		if len(config.Args) == 0 {
+			result := projector.GetValueAll()
+			marshaled, err := json.Marshal(result)
+			if err != nil {
+				log.Fatalf("Unable to marshal %v", err)
+			}
+			fmt.Printf("%v", string(marshaled))
+			break
+		} else if result, ok := projector.GetValue(config.Args[0]); ok {
+			fmt.Printf("%v", result)
 			break
 		}
-		projector.GetValue(config.Args[0])
 
 	case projector_config.Add:
-		fmt.Println("add")
-
 		projector.SetValue(config.Args[0], config.Args[1])
 		projector.Save()
 
 	case projector_config.Remove:
-		fmt.Println("remove")
 
 		projector.RemoveValue(config.Args[0])
 		projector.Save()

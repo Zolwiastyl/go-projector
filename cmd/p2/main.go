@@ -69,11 +69,8 @@ func main() {
 		lines = append(lines, *line)
 	}
 	filtered := filterLines(lines)
-	// filter lines when they are both horizontal or vertical
-	// and save them to new list
-	// then print the list
 
-	fmt.Println("%+v", filtered)
+	fmt.Printf("%+v", filtered)
 }
 
 func filterLines(lines []Line) (filtered []Line) {

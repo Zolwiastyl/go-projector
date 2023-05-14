@@ -85,11 +85,21 @@ func (p *Projector) RemoveValue(key string) {
 }
 
 func (p *Projector) Save() error {
+	dir := path.Dir(p.config.ConfigPath)
+
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err := os.MkdirAll(dir, 0755)
+		if err != nil {
+			return err
+		}
+	}
+
 	contents, err := json.Marshal(p.data)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(p.config.ConfigPath, contents, 0644)
+	file_path := path.Join(p.config.ConfigPath)
+	return os.WriteFile(file_path, contents, 0644)
 }
 
 func DefaultProjector(config *projector_config.Config) *Projector {
@@ -99,20 +109,22 @@ func DefaultProjector(config *projector_config.Config) *Projector {
 }
 
 func NewProjector(config *projector_config.Config) *Projector {
-	if _, err := os.Stat(config.ConfigPath); err != nil {
-		contents, err := os.ReadFile(config.ConfigPath)
-		if err != nil {
-			return DefaultProjector(config)
-		}
-		var data Data
-		err = json.Unmarshal(contents, &data)
-		if err != nil {
-			return DefaultProjector(config)
-		}
-		return &Projector{
-			data:   &data,
-			config: config,
-		}
+	if _, err := os.Stat(config.ConfigPath); os.IsNotExist(err) {
+		return DefaultProjector(config)
 	}
-	return DefaultProjector(config)
+
+	contents, err := os.ReadFile(config.ConfigPath)
+	if err != nil {
+		return DefaultProjector(config)
+	}
+	var data Data
+	err = json.Unmarshal(contents, &data)
+	if err != nil {
+		return DefaultProjector(config)
+	}
+	return &Projector{
+		data:   &data,
+		config: config,
+	}
+
 }
