@@ -58,11 +58,11 @@ func getConfigPath(options *Options) (string, error) {
 	if options.Config != "" {
 		return options.Config, nil
 	}
-	config, err := os.UserConfigDir()
+	config, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
-	return path.Join(config, "projector", "projector.json"), nil
+	return path.Join(config, ".projector.json"), nil
 
 }
 func getOperation(options *Options) Operation {

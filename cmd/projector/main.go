@@ -30,10 +30,10 @@ func main() {
 			if err != nil {
 				log.Fatalf("Unable to marshal %v", err)
 			}
-			fmt.Printf("%v", string(marshaled))
+			fmt.Printf("%v\n", string(marshaled))
 			break
 		} else if result, ok := projector.GetValue(config.Args[0]); ok {
-			fmt.Printf("%v", result)
+			fmt.Println(result)
 			break
 		}
 
